@@ -4,7 +4,7 @@ from schema.class_schema import ClassSchema
 from config.db import engine
 from model.classes import classes
 from typing import List
-
+from logger.logger import log_critical
 classes_router = APIRouter()
 
 

@@ -11,7 +11,6 @@ students = Table("students", meta_data,
              Column("last_name_student", String(255), nullable=False),
              Column("age", Integer, nullable=False),
              Column("phone_number", Integer, nullable=False),
-             Column("age", Integer, nullable=False),
              Column("email", String(255), nullable=False),
              Column("id_inscription", Integer, ForeignKey(inscriptions.c.id_inscription), nullable=False))
 
