@@ -12,7 +12,6 @@ classes_router = APIRouter()
 def get_classes():
     with engine.connect() as conn:
         result = conn.execute(classes.select()).fetchall()
-        
 
         return result
 
