@@ -20,7 +20,7 @@ def get_managers():
 def get_manager(manager_id: int):
     with engine.connect() as conn:
         result = conn.execute(
-            manager.select().where(manager.c.id_manager == manager_id)
+            manager.select().where(manager.c.id_mana == manager_id)
         ).first()
 
         return result
@@ -40,12 +40,12 @@ def update_manager(manager_data: ManagerSchema, manager_id: int):
     with engine.connect() as conn:
         conn.execute(
             manager.update().values(manager_data).where(
-                manager.c.id_manager == manager_id
+                manager.c.id_mana == manager_id
             )
         )
 
         updated_manager = conn.execute(
-            manager.select().where(manager.c.id_manager == manager_id)
+            manager.select().where(manager.c.id_mana == manager_id)
         ).first()
 
         return updated_manager
@@ -54,6 +54,6 @@ def update_manager(manager_data: ManagerSchema, manager_id: int):
 @manager_router.delete("/api/managers/{manager_id}", status_code=HTTP_204_NO_CONTENT)
 def delete_manager(manager_id: int):
     with engine.connect() as conn:
-        conn.execute(manager.delete().where(manager.c.id_manager == manager_id))
+        conn.execute(manager.delete().where(manager.c.id_mana == manager_id))
 
         return Response(status_code=HTTP_204_NO_CONTENT)
