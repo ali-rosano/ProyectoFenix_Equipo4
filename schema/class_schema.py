@@ -7,5 +7,4 @@ class ClassSchema(BaseModel):
     level: str
     price: float
     pack: str
-    id_prof: int
 

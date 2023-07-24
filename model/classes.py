@@ -11,7 +11,6 @@ classes = Table(
     Column("level", String(255), nullable=False),
     Column("price", Float, nullable=False),
     Column("pack", String(255), nullable=False),
-    Column("id_prof", Integer, ForeignKey(professors.c.id_prof), nullable=False)
 )
 
 meta_data.create_all(engine)

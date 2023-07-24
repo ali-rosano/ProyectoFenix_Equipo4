@@ -10,4 +10,3 @@ class InscriptionSchema(BaseModel):
     status: bool
     start_date: Optional[date] = None
     finish_date: Optional[date] = None
-    total_price: Optional[float] = None
