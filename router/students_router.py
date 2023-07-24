@@ -1,9 +1,16 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from sqlalchemy import select, update
+from sqlalchemy.exc import NoResultFound
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from schema.students_schema import StudentSchema 
+from business.discount_calculator import calculate_student_total_price
+from business.student_price_updater import update_student_price
 from config.db import engine
 from model.student import students
 from typing import List
+from model.descuentos_alumnos import descuentos_alumnos
+import logging
+import pprint
 
 student_router = APIRouter()
 
@@ -57,3 +64,47 @@ def delete_student(student_id: int):
         conn.execute(students.delete().where(students.c.id_student == student_id))
 
         return {"message": "Student deleted successfully"}
+
+
+
+@student_router.put("/api/students/{student_id}/update_student_price/", response_model=StudentSchema)
+def update_student_price(student_id: int):
+     # Calcular el nuevo precio total con descuentos para el estudiante
+    new_total_price = calculate_student_total_price(student_id)
+    logging.info(f"El precio es: {new_total_price}")
+    with engine.connect() as conn:
+        # Actualizar el precio total del estudiante en la tabla 'students'
+        stmt = update(students).where(students.c.id_user == student_id).values(Total_price=new_total_price)
+        conn.execute(stmt)
+
+        # Devuelve el estudiante actualizado
+        updated_student = conn.execute(select([students]).where(students.c.id_user == student_id)).first()
+        # Convertir el objeto a una instancia de StudentSchema
+        logging.info(updated_student)
+        updated_student_schema = StudentSchema(**updated_student)
+        return updated_student_schema
+
+"""
+@student_router.put("/api/students/{student_id}/update_student_price/", response_model=StudentSchema)
+def update_student_price(student_id: int):
+    # Calcular el nuevo precio total con descuentos para el estudiante
+    new_total_price = calculate_student_total_price(student_id)
+    logging.info(f"El precio es: {new_total_price}")
+    with engine.connect() as conn:
+        try:
+            # Actualizar el precio total del estudiante en la tabla 'students'
+            stmt = update(students).where(students.c.id_user == student_id).values(Total_price=new_total_price)
+            conn.execute(stmt)
+
+            # Devuelve el estudiante actualizado
+            updated_student = conn.execute(select([students]).where(students.c.id_user == student_id)).first()
+
+            if updated_student:
+                # Convertir el objeto a una instancia de StudentSchema
+                updated_student_data = dict(updated_student)
+                updated_student_schema = StudentSchema(**updated_student_data)
+                return updated_student_schema
+            else:
+                return {"message": "Student not found"}
+        except NoResultFound:
+            return {"message": "Student not found"}"""

@@ -3,7 +3,11 @@ from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from schema.inscriptions_schema import InscriptionSchema
 from config.db import engine
 from model.inscriptions import inscriptions
+from model.student import students
 from typing import List
+from business.discount_calculator import calculate_student_total_price
+from business.student_price_updater import update_student_price
+
 
 inscriptions_router = APIRouter()
 
@@ -32,6 +36,12 @@ def create_inscription(inscription_data: InscriptionSchema):
         new_inscription = inscription_data.dict()
         conn.execute(inscriptions.insert().values(new_inscription))
 
+        # Obtenemos el id_user (o student_id) de la inscripción
+        student_id = new_inscription["id_user"]
+
+        # Actualizamos el precio total del estudiante después de la inscripción
+        #update_student_price(student_id)
+        
         return {"message": "Inscription created successfully"}
 
 
@@ -67,3 +77,4 @@ def delete_inscription(inscription_id: int):
         )
 
         return {"message": "Inscription deleted successfully"}
+

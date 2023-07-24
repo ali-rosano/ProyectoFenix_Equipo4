@@ -1,10 +1,13 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from sqlalchemy import select, update
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from schema.class_schema import ClassSchema
 from config.db import engine
 from model.classes import classes
 from typing import List
 from logger.logger import log_critical
+
+
 classes_router = APIRouter()
 
 
@@ -36,13 +39,15 @@ def create_class(class_data: ClassSchema):
         return {"message": "Class created successfully"}
 
 
-@classes_router.put(
-    "/api/classes/{class_id}", response_model=ClassSchema
-)
+@classes_router.put("/api/classes/{class_id}", response_model=ClassSchema)
+
 def update_class(class_data: ClassSchema, class_id: int):
+
+    updated_data = class_data.dict()
+
     with engine.connect() as conn:
         conn.execute(
-            classes.update().values(class_data).where(
+            classes.update().values(**updated_data).where(
                 classes.c.id_class == class_id
             )
         )
@@ -61,7 +66,7 @@ def delete_class(class_id: int):
 
         return {"message": "Class deleted successfully"}
 
-
+"""
 @classes_router.put("/api/classes/{class_id}/assign_professor/{professor_id}")
 def assign_professor_to_class(class_id: int, professor_id: int):
     with engine.connect() as conn:
@@ -72,3 +77,4 @@ def assign_professor_to_class(class_id: int, professor_id: int):
         )
 
         return {"message": "Professor assigned to class successfully"}
+"""

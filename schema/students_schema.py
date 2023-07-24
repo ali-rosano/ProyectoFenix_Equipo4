@@ -9,4 +9,5 @@ class StudentSchema(BaseModel):
     age: int
     phone_number: int
     email: str
-    id_inscription: int
+    Referido: bool
+    Total_price: Optional[float]

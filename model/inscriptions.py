@@ -11,7 +11,6 @@ inscriptions = Table("inscriptions", meta_data,
     Column("type_inscription", String(255), nullable=False),
     Column("status", Boolean, nullable=False),
     Column("start_date", Date, nullable=False),
-    Column("finish_date", Date, nullable=False),
-    Column("total_price", Float, nullable=False))
+    Column("finish_date", Date, nullable=False))
 
 meta_data.create_all(engine)
