@@ -9,9 +9,13 @@ from typing import List
 from business.discount_calculator import calculate_student_total_price
 from business.student_price_updater import update_student_price
 from logger.logger import log_critical
+from sqlalchemy import extract
 
 inscriptions_router = APIRouter()
 
+def log_critical(mensaje):
+    # Tu código aquí para manejar la entrada de registro crítica
+    print(f"CRÍTICO: {mensaje}")
 
 @inscriptions_router.get("/api/inscriptions", response_model=List[InscriptionSchema])
 def get_inscriptions():
@@ -93,4 +97,21 @@ def delete_inscription(inscription_id: int):
         return {"message": "Inscription deleted successfully"}
     except Exception as e:
         log_critical(f"Error while deleting inscription: {str(e)}")
+        raise HTTPException(status_code=500, detail="Something went wrong")
+
+
+
+@inscriptions_router.get("/api/inscriptions/by_month/{month}", response_model=List[InscriptionSchema])
+def get_inscriptions_by_month(month: int):
+    try:
+        with engine.connect() as conn:
+            # Utilizamos SQL para filtrar inscripciones por mes
+            result = conn.execute(
+                inscriptions.select().where(
+                    extract('month', inscriptions.c.start_date) == month
+                )
+            ).fetchall()
+        return result
+    except Exception as e:
+        log_critical(f"Error while getting inscriptions by month: {str(e)}")
         raise HTTPException(status_code=500, detail="Something went wrong")
