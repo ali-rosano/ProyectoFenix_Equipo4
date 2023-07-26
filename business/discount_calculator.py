@@ -3,7 +3,6 @@ from config.db import engine
 from model.inscriptions import inscriptions
 from model.classes import classes
 from model.descuentos import descuentos
-from model.descuentos_alumnos import descuentos_alumnos
 import logging
 import pprint
 from . import general_functions
