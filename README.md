@@ -133,6 +133,32 @@ siguientes:
 
 4. El método "Delete" funciona de manera similar a la pestaña "Get", pero en lugar de obtener información, se utiliza para eliminar completamente todos los datos relacionados con un usuario, estudiante, profesor o manager específico.
 
+5. EL PROGRAMA NO CREA LA BASE DE DATOS, SE CREA A TRAVES DEL MYSQL, EJECUTANDO EL QUERY EL SIGUIENTE COMANDO: CREATE DATABASE proyectofenix;
 
+6. El programa cuenta con sistemas de logs y test para registro y la comprobacion del buen funcionamiento. Los test estan por ahora implementados en:
+
+**TEST**
+* Crea el motor de SQLAlchemy:
+
+- engine = create_engine(connection_string)
+
+* Crea la base de datos (si no existe)
+
+- engine.execute(f"CREATE DATABASE IF NOT EXISTS mydatabase;")
+
+* Cierra la conexión del motor
+
+- engine.dispose()
+
+**LOGGER**
+T
+
+7. Configura la cadena de conexión de MySQL a traves del archivo "example.env". Reemplaza 'username', 'password' y 'database_name' con los valores de tu base de datos:
+
+- MYSQL_DB='database_name'
+- MYSQL_USER= 'username'
+- MYSQL_PASSWORD= 'password'
+
+**RECORDATORIO:** el cambio de valores se hace en el archivo "example.env", en los valores que se te indican. Por ultimo el nombre del archivo debe ser cambiado de "example.env" a ".env"
 
 
