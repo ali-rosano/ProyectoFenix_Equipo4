@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response
 import pandas as pd
 from config.db import engine
+from logger.logger import log_info
 
 router = APIRouter()
 
@@ -21,4 +22,5 @@ def descargar_alumnos():
     # Devuelve el CSV como una respuesta HTTP con el encabezado adecuado
     response = Response(content=csv_data, media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=alumnos.csv"
+    log_info("descargada con exito los usuarios en un csv")
     return response

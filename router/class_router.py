@@ -5,7 +5,7 @@ from schema.class_schema import ClassSchema
 from config.db import engine
 from model.classes import classes
 from typing import List
-from logger.logger import log_critical
+from logger.logger import log_critical, log_error, log_info
 
 classes_router = APIRouter()
 
@@ -15,6 +15,7 @@ def get_classes():
     try:
         with engine.connect() as conn:
             result = conn.execute(classes.select()).fetchall()
+            log_info("Clases traidas con exito")
         return result
     except Exception as e:
         log_critical(f"Error while getting classes: {str(e)}")
@@ -28,7 +29,9 @@ def get_class(class_id: int):
             result = conn.execute(
                 classes.select().where(classes.c.id_class == class_id)
             ).first()
+            log_info("Clase traida con exito")
         if result is None:
+            log_error("Clase inexistente")
             raise HTTPException(status_code=404, detail="Class not found")
         return result
     except HTTPException:
@@ -44,6 +47,7 @@ def create_class(class_data: ClassSchema):
         with engine.connect() as conn:
             new_class = class_data.dict()
             conn.execute(classes.insert().values(new_class))
+            log_info("Clase creada con exito")
         return {"message": "Class created successfully"}
     except Exception as e:
         log_critical(f"Error while creating class: {str(e)}")
@@ -61,6 +65,7 @@ def update_class(class_data: ClassSchema, class_id: int):
             updated_class = conn.execute(
                 classes.select().where(classes.c.id_class == class_id)
             ).first()
+            log_info("clase actualizada con exito")
         return updated_class
     except Exception as e:
         log_critical(f"Error while updating class: {str(e)}")
@@ -72,6 +77,7 @@ def delete_class(class_id: int):
     try:
         with engine.connect() as conn:
             conn.execute(classes.delete().where(classes.c.id_class == class_id))
+            log_info("Clase eliminida con exito")
         return {"message": "Class deleted successfully"}
     except Exception as e:
         log_critical(f"Error while deleting class: {str(e)}")
@@ -87,6 +93,7 @@ def assign_professor_to_class(class_id: int, professor_id: int):
                 .values(professor_id=professor_id)
                 .where(classes.c.id_class == class_id)
             )
+            log_info("clase asignada al profesor con exito")
         return {"message": "Professor assigned to class successfully"}
     except Exception as e:
         log_critical(f"Error while assigning professor to class: {str(e)}")
