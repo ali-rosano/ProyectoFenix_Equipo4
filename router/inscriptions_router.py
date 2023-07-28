@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, HTTPException
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from schema.inscriptions_schema import InscriptionSchema
@@ -8,7 +7,7 @@ from model.student import students
 from typing import List
 from business.discount_calculator import calculate_student_total_price
 from business.student_price_updater import update_student_price
-from logger.logger import log_critical
+from logger.logger import log_critical, log_info, log_error
 from sqlalchemy import extract
 
 inscriptions_router = APIRouter()
@@ -22,6 +21,7 @@ def get_inscriptions():
     try:
         with engine.connect() as conn:
             result = conn.execute(inscriptions.select()).fetchall()
+            log_info("inscripciones traidas con exito")
         return result
     except Exception as e:
         log_critical(f"Error while getting inscriptions: {str(e)}")
@@ -35,7 +35,9 @@ def get_inscription(inscription_id: int):
             result = conn.execute(
                 inscriptions.select().where(inscriptions.c.id_inscription == inscription_id)
             ).first()
+            log_info("inscripcion traida con exito")
         if result is None:
+            log_error("La inscripcion no existe")
             raise HTTPException(status_code=404, detail="Inscription not found")
         return result
     except HTTPException:
@@ -55,6 +57,7 @@ def create_inscription(inscription_data: InscriptionSchema):
             student_id = new_inscription["id_user"]
             # Actualizamos el precio total del estudiante después de la inscripción
             # update_student_price(student_id)
+            log_info("Inscripicion creada con exito")
         return {"message": "Inscription created successfully"}
     except Exception as e:
         log_critical(f"Error while creating inscription: {str(e)}")
@@ -77,6 +80,7 @@ def update_inscription(
                     inscriptions.c.id_inscription == inscription_id
                 )
             ).first()
+            log_info("Inscripcion actualizada")
         return updated_inscription
     except Exception as e:
         log_critical(f"Error while updating inscription: {str(e)}")
@@ -94,6 +98,7 @@ def delete_inscription(inscription_id: int):
                     inscriptions.c.id_inscription == inscription_id
                 )
             )
+            log_info("Incripcion eliminada con exito")
         return {"message": "Inscription deleted successfully"}
     except Exception as e:
         log_critical(f"Error while deleting inscription: {str(e)}")
@@ -111,6 +116,7 @@ def get_inscriptions_by_month(month: int):
                     extract('month', inscriptions.c.start_date) == month
                 )
             ).fetchall()
+            log_info("Incripciones bien filtradas por mes")
         return result
     except Exception as e:
         log_critical(f"Error while getting inscriptions by month: {str(e)}")

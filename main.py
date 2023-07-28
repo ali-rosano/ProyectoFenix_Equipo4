@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from router import download_router
 from router.router import user
 from router.inscriptions_router import inscriptions_router
 from router.class_router import classes_router
@@ -34,6 +35,7 @@ app = FastAPI(openapi_tags=tags_metadata, title="Danza Fénix API",
     version="0.0.1",
    )
 
+app.include_router(download_router.router)
 app.include_router(user)
 app.include_router(inscriptions_router)
 app.include_router(classes_router)
